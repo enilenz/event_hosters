@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Carousel from './Carousel';
+import Navbar from './Navbar';
 import firstImage from '../assets/event7d.jpg';
 
 const Home = () => {

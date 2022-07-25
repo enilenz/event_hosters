@@ -30,7 +30,7 @@ const Navbar = () => {
           <div className='navbar-text'>
                         <div className='container'>
                             <span className="border border-white rounded-pill border-2 px-3 py-1 bg-white opacity-75 text-black fw-bolder">
-                                <i className="bi bi-calendar2-event-fill pe-2"></i>
+                                <i className="bi bi-coin pe-2"></i>
 
                                 120 EHT
                             </span>
