@@ -1,8 +1,11 @@
 import React from 'react'
+import AddEvent from './AddEvent'
 
 const About = () => {
   return (
-    <div>About</div>
+    <div>
+      <AddEvent/>
+    </div>
   )
 }
 
