@@ -62,6 +62,12 @@ contract EventFactory {
         Personal
     }
 
+    enum Location{
+        Lagos,
+        Abuja,
+        Enugu
+    }
+
     struct Attendees{
         address attendants;
         uint volume; 
@@ -71,6 +77,7 @@ contract EventFactory {
 
     struct Event{
         address eventOwner;
+        string eventOwnerName;
         mapping(address => uint) attendees;
         uint ticketVolume;
         uint roomId;
@@ -83,6 +90,7 @@ contract EventFactory {
 
     event EventCreated(
         address eventOwner,
+        string eventOwnerName,
      //   mapping(address => uint) 
         uint ticketVolume,
         uint id,
@@ -98,6 +106,7 @@ contract EventFactory {
 
     function createEvent(
         address eventOwner,
+        string memory eventOwnerName,
         uint ticketVolume,
         uint ticketPrice,
         uint eventDays,
@@ -116,6 +125,7 @@ contract EventFactory {
         Event storage newEvent = allEvents[x];
 
         newEvent.eventOwner = eventOwner;
+        newEvent.eventOwnerName = eventOwnerName; 
         newEvent.ticketVolume = ticketVolume;
         newEvent.roomId = x;
         newEvent.ticketPrice = ticketPrice;
@@ -126,6 +136,7 @@ contract EventFactory {
 
     }
 
+    // payments to event owner either on delete event or seperate function
     function deleteEvent(uint id) public returns(string memory n){
         allRooms[id].booked = false;
         n = allEvents[id].description;
@@ -134,11 +145,12 @@ contract EventFactory {
     }
 
     function getEventInfo(uint id) view external returns(
-        address, uint, uint, uint, uint, string memory, string[] memory, EventType
+        address, string memory, uint, uint, uint, uint, string memory, string[] memory, EventType
     ){
         Event storage theEvent = allEvents[id];
         return (
             theEvent.eventOwner,
+            theEvent.eventOwnerName,
             theEvent.ticketVolume,
             theEvent.roomId,
             theEvent.ticketPrice,
@@ -149,7 +161,7 @@ contract EventFactory {
         );
     }
 
-    error NoSuchEvent(uint id);
+   // error NoSuchEvent(uint id);
 
     function buyEventTicket(uint id, uint volume) payable external returns(bool){
         for(uint i = 0; i < EVENT_ROOMS; i++){

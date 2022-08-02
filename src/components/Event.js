@@ -1,8 +1,6 @@
 import React from 'react'
 
 const Event = ({ event }) => {
-    
-    let id = event.id;
 
     let fdcontent;
     if(event.foodAndDrink){
@@ -17,13 +15,16 @@ const Event = ({ event }) => {
 
         <div>
             <div class="card border-dark w-75 mx-auto my-4">
-                <div class="card-header bg-secondary">
+                <div class="card-header bg-secondary">       
                     <div className='ms-auto d-flex justify-content-end'>
+                        <div className='me-auto'>
+                             <strong >Room Id: {event.id}</strong>
+                        </div>
                         Ticket Count: <strong className='px-1'>{event.ticketNumber}</strong>
                         <div className='px-2'></div>
                         <span class="border-start px-2 border-2 border-dark"></span>
                         Ticket Price: <strong className='px-1'> {event.ticketPrice}EHT</strong>
-                    </div>
+                    </div>         
                 </div>
                 <div class="card-body shadow-lg">
                     <div class="card-title row"> 
