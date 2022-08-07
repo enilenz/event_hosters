@@ -11,6 +11,7 @@ import Home from './components/Home';
 import About from './components/About';
 import Events from './components/Events';
 import Navbar from "./components/Navbar";
+import { createEvent } from '@testing-library/react';
 
 const ERC20_DECIMALS = 18;
 const contractAddress = "0x57Eb98688DE082a3d542F1a09d431477c74227f5";
@@ -23,7 +24,7 @@ var contract;
 function App() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [connectedAddress, setConnectedAddress] = useState("");
-  const [userBalance, setUserBalance] = useState(0.0);
+  const [userBalance, setUserBalance] = useState(0);
 
 
   const connectWallet = async () => {
@@ -36,8 +37,8 @@ function App() {
         const accounts = await kit.web3.eth.getAccounts();
         kit.defaultAccount = accounts[0];
         setConnectedAddress(accounts[0]);
-        const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
-        const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
+
+        await getBalance();
 
       } catch (error) {
         console.log(error);
@@ -45,32 +46,65 @@ function App() {
     } else {
       console.log("Install Celo Extension wallet");
     }
-
+    // await getBalance();
     setWalletConnected(true);
     console.log(walletConnected);
   }
+
+  const checkWalletConnected = async () => {
+    if (window.celo) {
+      try {
+        const web3 = new Web3(window.celo);
+        kit = newKitFromWeb3(web3);
+        const accounts = await kit.web3.eth.getAccounts();
+        kit.defaultAccount = accounts[0];
+        setConnectedAddress(accounts[0]);
+       
+        await getBalance();
+        setWalletConnected(true);
+      } catch (error) {
+        console.log(error);
+ 
+      }
+
+    }
+  }
+
+  const createEvent = async() => {
+     console.log("create called")
+  }
+
+  const buyTicket = async(id) => {
+     console.log("ticket called")
+  }
+
+  const getBalance = async () => {
+    const totalBalance = await kit.getTotalBalance(kit.defaultAccount);
+    console.log(totalBalance);
+    const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2);
+    setUserBalance(cUSDBalance);
+  }
+
+  useEffect(() => {
+    connectWallet()
+  },[])
+
+  useEffect(() => {
+    checkWalletConnected()
+  },[connectedAddress,])
   
 
   return (
     <Router>
     <div className="App">
       {connectedAddress}
-      {totalBalance}
-      <Navbar />
-
-      <Modal show={!walletConnected} onClick={() => connectWallet()} style={{ backdropFilter: "blur(20px)" }} size="sm" centered>
-          <Button variant='light'>
-            <div className='text-center'>
-              connect wallet
-            
-            </div>
-          </Button>
-        </Modal>
+      {userBalance}
+      <Navbar balance={userBalance} />
 
       <Routes>
 
       <Route ex path="/" element={<Home/>}></Route>
-      <Route ex path="/events" element={<Events/>}></Route>
+      <Route ex path="/events" element={<Events createEvent={createEvent} buyTicket={buyTicket}/>}></Route>
       <Route ex path="/about" element={<About/>}></Route>
 
       </Routes>

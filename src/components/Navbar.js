@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
-const Navbar = ({ connectWallet }) => {
+const Navbar = ({balance }) => {
   const clickSpan = ()=> {
     alert("hi im working")
   }
@@ -38,7 +38,7 @@ const Navbar = ({ connectWallet }) => {
 
               <span className="border border-white rounded-pill border-2 px-3 py-1 bg-white opacity-75 text-black fw-bolder">
                 <i className="bi bi-coin pe-2"></i>
-                          3 CELO
+                          {balance}cUSD
               </span>
           
 

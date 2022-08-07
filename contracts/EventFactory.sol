@@ -1,12 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
+interface IERC20Token {
+  function transfer(address, uint256) external returns (bool);
+  function approve(address, uint256) external returns (bool);
+  function transferFrom(address, address, uint256) external returns (bool);
+  function totalSupply() external view returns (uint256);
+  function balanceOf(address) external view returns (uint256);
+  function allowance(address, address) external view returns (uint256);
+
+  event Transfer(address indexed from, address indexed to, uint256 value);
+  event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
 contract EventFactory {
+    address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
+    uint internal eventsLength = 0;
 
     address private owner;
     uint8 private constant EVENT_ROOMS = 15;
     uint8 private constant ROOM_CAPACITY = 100;
-    uint64 private constant rate = 1 ether;
+    uint64 private constant rate = 1 ;
     uint8 private eventIDs;
 
     struct Room{
@@ -17,6 +31,7 @@ contract EventFactory {
     Room[] public allRooms;
 
     constructor(){
+        owner = payable(msg.sender);
        // eventIDs = 0;
         allRooms.push(Room(0, false));
         allRooms.push(Room(1, false));
@@ -115,10 +130,19 @@ contract EventFactory {
         EventType eventType
 
     ) payable external{
+        
+       	require(
+		  IERC20Token(cUsdTokenAddress).transferFrom(
+			msg.sender,
+			owner,
+			rate
+		  ),
+		  "Transfer failed."
+		);
 
         (uint x, bool y) = checkAvailableRooms();
         require(y == true, "Sorry, no available rooms to book");      
-        require(msg.value ==  eventDays * rate, "invalid payment amount");
+       
         require(eventOwner != address(0), "invalid address given");
         require(ticketVolume <= ROOM_CAPACITY, "ticket volume exceeds room capacity");
         allRooms[x].booked = true;

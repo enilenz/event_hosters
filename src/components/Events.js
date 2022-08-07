@@ -7,11 +7,10 @@ import AddEvent from './AddEvent'
 
 import bg from '../assets/eventbg.jpg'
 
-const Events = () => {
+const Events = ({createEvent, buyTicket}) => {
   const eventTypes = ["social", "personal", "business"]
   const location = ["Lagos", "Abuja", "Enugu"]
 
-  //const id = Math.floor(Math.random() * 10000) + 1
 
   const [events, setEvents] = useState([
     {
@@ -91,6 +90,12 @@ const Events = () => {
     },
   ])
 
+  const addEvent = (nevent) => {
+     const id =  Math.floor(Math.random() * 10000) + 1
+     const newEvent = {id, ...nevent}
+     setEvents(...events, newEvent)
+  }
+
   const [showForm, setShowForm] = useState(false);
 
   return (
@@ -99,7 +104,7 @@ const Events = () => {
       <nav class="navbar navbar-light bg-light">
         <div class="container-fluid d-flex justify-content-around">
           <span class="navbar-text text-dark text-center">
-            Here you can view all available events and book your own! Every payment in our native EHT token will be rewarded with 10% discount. 
+            Here you can view all available events and book your own! Every payment in our native EHT token will be rewarded with a 10% discount. 
           </span>
         </div>
       </nav>
@@ -113,14 +118,14 @@ const Events = () => {
 
       <div className=' container-fluid fixed-bottom py-2 ms-auto d-flex justify-content-end '>
 
-        <button type="button" class="btn btn-dark rounded-pill border border-dark fs-5 " data-bs-toggle="modal" data-bs-target="#formModal">
+        <button type="button" class="btn btn-dark rounded-pill border border-dark fs-5 " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
           Create Event
           <i class="bi bi-plus-circle-dotted px-2"></i>
         </button>
 
       </div>
 
-      <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header text-center">
@@ -128,7 +133,7 @@ const Events = () => {
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
+           
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -31,7 +31,7 @@ const Event = ({ event }) => {
                        <h5 className='col'>{event.name}</h5>
                        <div className='col d-flex justify-content-end fw-normal'> 
                         <i class="bi bi-calendar-heart-fill mx-3"></i>
-                        Mon 13th - Friday 17th 
+                            Mon 13th - Fri 17th                       
                        </div>
                     </div>
                     <p class="card-text">{event.description}</p>
