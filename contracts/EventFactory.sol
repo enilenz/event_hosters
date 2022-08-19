@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 
 interface IERC20Token {
   function transfer(address, uint256) external returns (bool);
@@ -19,7 +19,7 @@ interface IERC20Token {
 // Organizers who wish to host events book said room(s) for a limited amount of time and sell their tickets.
 // After said events are concluded, rooms are reallocated for future events.
 
-contract EventFactory is ERC20 {
+contract EventFactory {
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
 
     address private owner;

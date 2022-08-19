@@ -12,10 +12,11 @@ const Event = ({ event, buyTicket }) => {
     const [yourTicketCount, setYourTicketCount] = useState(0)
     const [ticketCount, setTicketCount] = useState(event.ticketNumber)
 
+
     const buyEventTicket = async() => {
         await buyTicket();
         setYourTicketCount(yourTicketCount + 1)
-        event.ticketNumber -= 1
+        setTicketCount(ticketCount -1)
         console.log(ticketCount)
     }
 
@@ -32,7 +33,7 @@ const Event = ({ event, buyTicket }) => {
                                 </strong>
                             }
                         </div>
-                        Ticket Count: <strong className='px-1'>{event.ticketNumber}</strong>
+                        Ticket Count: <strong className='px-1'>{ticketCount}</strong>
                         <div className='px-2'></div>
                         <span class="border-start px-2 border-2 border-dark"></span>
                         Ticket Price: <strong className='px-1'> {event.ticketPrice}cUSD</strong>

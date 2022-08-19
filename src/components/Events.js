@@ -38,7 +38,7 @@ const Events = ({ createEvent,  buyTicket, connectedAddress}) => {
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque aliquet tellus blandit magna tincidunt ullamcorper. Phasellus tempus orci et facilisis vehicula. Etiam suscipit convallis libero, et suscipit tellus posuere in. Aliquam elementum.",
       organizerAddedinfo: "+2348020709467",
       ticketNumber: 56,
-      ticketPrice: 0.5,
+      ticketPrice: 1,
       eventType: eventTypes[0],
       startDate: new Date(),
       endDate: new Date(),
@@ -83,7 +83,7 @@ const Events = ({ createEvent,  buyTicket, connectedAddress}) => {
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque aliquet tellus blandit magna tincidunt ullamcorper. Phasellus tempus orci et facilisis vehicula. Etiam suscipit convallis libero, et suscipit tellus posuere in. Aliquam elementum.",
       organizerAddedinfo: "randomMag@gmail.com",
       ticketNumber: 100,
-      ticketPrice: 0.5,
+      ticketPrice: 1,
       eventType: eventTypes[0],
       startDate: new Date(),
       endDate: new Date(),
@@ -98,7 +98,7 @@ const Events = ({ createEvent,  buyTicket, connectedAddress}) => {
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque aliquet tellus blandit magna tincidunt ullamcorper. Phasellus tempus orci et facilisis vehicula. Etiam suscipit convallis libero, et suscipit tellus posuere in. Aliquam elementum.",
       organizerAddedinfo: "qlabs@gmail.com",
       ticketNumber: 37,
-      ticketPrice: 0.3,
+      ticketPrice: 1,
       eventType: eventTypes[2],
       startDate: new Date(),
       endDate: new Date(),
@@ -107,21 +107,6 @@ const Events = ({ createEvent,  buyTicket, connectedAddress}) => {
       id: Math.floor(Math.random() * 10000) + 1
     },
   ])
-
-
-  // useEffect(() => {
-  //   try{
-  //     const eventValue = window.localStorage.getItem('eventss')
-  //     setEvents(JSON.parse(eventValue) ?? [])
-  //   }catch(e){
-  //     console.log(e)
-  //   }
-
-  // }, [])
-
-  // useEffect(() => {
-  //   window.localStorage.setItem('eventss', JSON.stringify(events));
-  // }, [events]);
 
 
   const setDefaultAccount= () => {
@@ -192,16 +177,6 @@ const Events = ({ createEvent,  buyTicket, connectedAddress}) => {
       {events.map((event) => (
         <Event event={event}  buyTicket={buyTicket} key={event.id} />
       ))}
-
-
-      {/* <div className=' container-fluid fixed-bottom py-2 ms-auto d-flex justify-content-end '>
-
-        <button type="button" class="btn btn-dark rounded-pill border border-dark fs-5" onClick={setDefaultAccount} data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-          Create Event
-          <i class="bi bi-plus-circle-dotted px-2"></i>
-        </button>
-
-      </div> */}
 
       <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
