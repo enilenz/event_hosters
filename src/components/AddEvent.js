@@ -106,7 +106,7 @@ const AddEvent = () => {
                             </select>
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input form-control" id="foodAndDrink" value={foodAndDrink} onChange={(e) => setFoodAndDrink(e.currentTarget.checked)}/>
+                            <input type="checkbox" class="form-check-input " id="foodAndDrink" value={foodAndDrink} onChange={(e) => setFoodAndDrink(e.currentTarget.checked)}/>
                             <label for="foodAndDrink" class="form-check-label">Food and Drink</label>
                             <div id="eventNameHelp" class="form-text">Provision of refreshments will cost an additional amount</div>
                         </div>

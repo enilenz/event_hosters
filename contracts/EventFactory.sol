@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
+// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 interface IERC20Token {
   function transfer(address, uint256) external returns (bool);
   function approve(address, uint256) external returns (bool);
@@ -13,16 +15,26 @@ interface IERC20Token {
   event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract EventFactory {
+// This contract is written under the premise of an event center with limited amount of rooms.
+// Organizers who wish to host events book said room(s) for a limited amount of time and sell their tickets.
+// After said events are concluded, rooms are reallocated for future events.
+
+contract EventFactory is ERC20 {
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
-    uint internal eventsLength = 0;
 
     address private owner;
     uint8 private constant EVENT_ROOMS = 15;
-    uint8 private constant ROOM_CAPACITY = 100;
-    uint64 private constant rate = 1 ;
+    uint16 private constant ROOM_CAPACITY = 300;
+    uint256 private constant freeCoinEventCreation = 5000000000000000000;
+    uint256 private constant freeCoinTicketBought = 5000000000000000000;
     uint8 private eventIDs;
 
+    address payable mine = payable(0xdeDAA82112CC660a979619307865bFfBB31A067C);
+
+    uint256 private constant standard = 1000000000000000000;
+    
+    
+    // Room struct with the rooms physical id and whether it is booked for an event.
     struct Room{
         uint id;
         bool booked;
@@ -30,9 +42,8 @@ contract EventFactory {
 
     Room[] public allRooms;
 
-    constructor(){
-        owner = payable(msg.sender);
-       // eventIDs = 0;
+    constructor() {
+
         allRooms.push(Room(0, false));
         allRooms.push(Room(1, false));
         allRooms.push(Room(2, false));
@@ -48,12 +59,16 @@ contract EventFactory {
         allRooms.push(Room(12, false));
         allRooms.push(Room(13, false));
         allRooms.push(Room(14, false));
+        
 
     }
 
+    receive() external payable{}
+
     event RoomInfo(uint id, bool x);
 
-    function checkAvailableRooms() public payable returns(uint x, bool y)  {
+    // Function to check if there are available rooms to book.
+    function checkAvailableRooms() public returns(uint x, bool y)  {
         for(uint i = 0; i < EVENT_ROOMS; i++){
             if(allRooms[i].booked == false){
                 x = allRooms[i].id;
@@ -88,126 +103,147 @@ contract EventFactory {
         uint volume; 
     }
 
-    Attendees[] private ff;
-
     struct Event{
         address eventOwner;
-        string eventOwnerName;
-        mapping(address => uint) attendees;
+        string eventName;
+        address[] attendees;
+        mapping(address => uint) attendeesTicketVolume;
         uint ticketVolume;
-        uint roomId;
         uint ticketPrice;
-        uint eventDays;
-        string description;
-        string[] datesBooked;
+        uint roomId;
+        string startDate;
+        string endDate;
         EventType eventType; 
     }
 
     event EventCreated(
         address eventOwner,
         string eventOwnerName,
-     //   mapping(address => uint) 
         uint ticketVolume,
-        uint id,
         uint ticketPrice,
-        uint eventDays, 
-        string description,
-        string[] datesBooked,
+        string startDate,
+        string endDate,
         EventType eventType
     );
 
     mapping (uint => Event) allEvents;
-   // uint[] private ids;
 
+    // Function to create an event.
     function createEvent(
-        address eventOwner,
-        string memory eventOwnerName,
+        address payable eventOwner,
+        string memory eventName,
         uint ticketVolume,
         uint ticketPrice,
-        uint eventDays,
-        string memory description,
-        string[] memory datesBooked,
+        string memory startDate,
+        string memory endDate,
         EventType eventType
 
     ) payable external{
-        
-       	require(
+
+     	require(
 		  IERC20Token(cUsdTokenAddress).transferFrom(
-			msg.sender,
-			owner,
-			rate
+            msg.sender, 
+			mine,
+			standard
 		  ),
 		  "Transfer failed."
 		);
 
         (uint x, bool y) = checkAvailableRooms();
         require(y == true, "Sorry, no available rooms to book");      
-       
         require(eventOwner != address(0), "invalid address given");
         require(ticketVolume <= ROOM_CAPACITY, "ticket volume exceeds room capacity");
         allRooms[x].booked = true;
         Event storage newEvent = allEvents[x];
 
         newEvent.eventOwner = eventOwner;
-        newEvent.eventOwnerName = eventOwnerName; 
+        newEvent.eventName = eventName; 
         newEvent.ticketVolume = ticketVolume;
-        newEvent.roomId = x;
         newEvent.ticketPrice = ticketPrice;
+        newEvent.startDate = startDate;
+        newEvent.endDate = endDate;
+        newEvent.roomId = x;
         newEvent.eventType = eventType;
-        newEvent.description = description;
-        newEvent.eventDays = eventDays;
-        newEvent.datesBooked = datesBooked;
+
+        emit EventCreated(eventOwner, eventName, ticketVolume, ticketPrice, startDate, endDate, eventType);
 
     }
 
     // payments to event owner either on delete event or seperate function
-    function deleteEvent(uint id) public returns(string memory n){
+    function deleteEvent(uint id) public  returns(string memory n) {
         allRooms[id].booked = false;
-        n = allEvents[id].description;
+        n = allEvents[id].eventName;
         delete allEvents[id];
         return n;
     }
 
     function getEventInfo(uint id) view external returns(
-        address, string memory, uint, uint, uint, uint, string memory, string[] memory, EventType
+        address, string memory, uint, uint, uint,  string memory, string memory, EventType
     ){
         Event storage theEvent = allEvents[id];
         return (
             theEvent.eventOwner,
-            theEvent.eventOwnerName,
+            theEvent.eventName,
             theEvent.ticketVolume,
             theEvent.roomId,
             theEvent.ticketPrice,
-            theEvent.eventDays,
-            theEvent.description,
-            theEvent.datesBooked,
+            theEvent.startDate,
+            theEvent.endDate,
             theEvent.eventType
         );
     }
 
-   // error NoSuchEvent(uint id);
+    function getEventAttendees(uint id) public view returns(address[] memory){
+        
+        return(allEvents[id].attendees);
+    }
 
+    function getEventAttendeesTicketVolume(uint id ) public view returns (uint){
+        return(allEvents[id].attendeesTicketVolume[msg.sender]);
+    }
+
+    error NoSuchEvent(uint id);
+
+    // Function to buy event ticket.
     function buyEventTicket(uint id, uint volume) payable external returns(bool){
         for(uint i = 0; i < EVENT_ROOMS; i++){
             if(id == allRooms[i].id){
                 break;
             }
         }
+
         Event storage theEvent = allEvents[id];
+
+     	require(
+		  IERC20Token(cUsdTokenAddress).transfer( 
+			theEvent.eventOwner,
+			theEvent.ticketPrice
+		  ),
+		  "Transfer failed."
+		);
         
         require(volume <= 3, "No user may buy more than three tickets");
-        require(theEvent.ticketVolume < volume);
-       
-        theEvent.attendees[msg.sender] = volume;
+        theEvent.attendeesTicketVolume[msg.sender] = volume;
+        theEvent.attendees.push(msg.sender);
 
         theEvent.ticketVolume -= volume;
 
 
 
-        //emit some kind of event
-
 
         return true;
+    }
+
+    function testTransfer() public returns(bool s){
+     	require(
+		  IERC20Token(cUsdTokenAddress).transferFrom(
+            msg.sender, 
+			mine,
+			standard
+		  ),
+		  "Transfer failed."
+		);
+        s= true;
     }
 
     

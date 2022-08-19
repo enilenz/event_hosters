@@ -24,7 +24,7 @@ const Navbar = ({balance }) => {
             </li>
             <li class="nav-item">
               {/* <a class="nav-link" href="#">About</a> */}
-              <Link to="/about" class="nav-link ">About</Link>
+              <Link to="/menu" class="nav-link ">Menu</Link>
             </li>
             <li class="nav-item">
               {/* <a class="nav-link" href="#">Contact Us</a> */}
