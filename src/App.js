@@ -15,7 +15,7 @@ import contractABI from './eventhosters.abi.json';
 import erc20ABI from './erc20.abi.json';
 
 const ERC20_DECIMALS = 18;
-const contractAddress = "0xdB6791f5bA4d5305D0FcCA3C91860e175B3e5434";
+const contractAddress = "0x9A9ba0BFc1b8fc8C58831a582099E63Ce576bDC2";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 var kit;
@@ -117,6 +117,8 @@ function App() {
     <div className="App">
 
       <Navbar balance={userBalance} />
+      
+      
 
       <Routes>
 
@@ -125,8 +127,6 @@ function App() {
       <Route ex path="/menu" element={<Menu/>}></Route>
 
       </Routes>
-      
-
     </div>
     </Router>
   );

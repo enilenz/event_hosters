@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Carousel from './Carousel';
-import Navbar from './Navbar';
+
 import firstImage from '../assets/event7d.jpg';
 import secondImage from '../assets/event8d.jpg';
 
@@ -61,9 +61,17 @@ const Home = () => {
 
             </div>
 
+        
+            <div className=' container text-center mt-4 mb-4'>
+                <h5>Head on over to the events page</h5>
+                <a class="btn btn-primary" href="events" role="button">Events</a>
+            </div>
+
           </div>
         </div>
       </section>
+
+     
 
   
 

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 
 
 interface IERC20Token {
@@ -19,18 +21,18 @@ interface IERC20Token {
 // Organizers who wish to host events book said room(s) for a limited amount of time and sell their tickets.
 // After said events are concluded, rooms are reallocated for future events.
 
-contract EventFactory {
+contract EventFactory is ERC20 {
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
 
     address private owner;
     uint8 private constant EVENT_ROOMS = 15;
     uint16 private constant ROOM_CAPACITY = 300;
     uint256 private constant freeCoinEventCreation = 5000000000000000000;
-    uint256 private constant freeCoinTicketBought = 5000000000000000000;
+    uint256 private constant freeCoinTicketBought = 1000000000000000000;
     uint8 private eventIDs;
 
-    address payable mine = payable(0xdeDAA82112CC660a979619307865bFfBB31A067C);
-
+    address private contractAddress = payable(address(this));
+    address private  mine = payable(0x6155C23F7Ed8f8eD535D8DB6e03d0B0B5A9f467f);
     uint256 private constant standard = 1000000000000000000;
     
     
@@ -42,7 +44,10 @@ contract EventFactory {
 
     Room[] public allRooms;
 
-    constructor() {
+    constructor() ERC20("Event Hosters Token", "EHT") {
+
+
+        _mint(contractAddress, 1000000 * 10 ** decimals());
 
         allRooms.push(Room(0, false));
         allRooms.push(Room(1, false));
@@ -149,6 +154,8 @@ contract EventFactory {
 		  "Transfer failed."
 		);
 
+        IERC20Token(address(this)).transfer(msg.sender, freeCoinEventCreation);
+
         (uint x, bool y) = checkAvailableRooms();
         require(y == true, "Sorry, no available rooms to book");      
         require(eventOwner != address(0), "invalid address given");
@@ -221,6 +228,8 @@ contract EventFactory {
 		  ),
 		  "Transfer failed."
 		);
+
+        IERC20Token(address(this)).transfer(msg.sender, freeCoinTicketBought);
         
         require(volume <= 3, "No user may buy more than three tickets");
         theEvent.attendeesTicketVolume[msg.sender] = volume;

@@ -4,7 +4,7 @@ const Event = ({ event, buyTicket }) => {
 
     let fdcontent;
     if (event.foodAndDrink) {
-        fdcontent = <p>Food and Drink: Provided, please check the menu <a href='menu' t>here</a></p>
+        fdcontent = <p>Food and Drink: Provided, please check the menu <a href='menu'>here</a></p>
     } else {
         fdcontent = <p>Food and Drink: This event will not provide refreshments</p>
     }
