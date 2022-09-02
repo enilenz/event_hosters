@@ -266,8 +266,8 @@ contract EventFactory is ERC20 {
     }
 
     /// @dev Function for the owner to change the ticket price
-    function changeEventPrice(uint id , uint price) public {
-        require(msg.sender == allEvents[id].owner);
+    function changeTicketPrice(uint id , uint price) public {
+        require(msg.sender == allEvents[id].owner, "Only the owner can change the price");
         allEvents[id].ticketPrice = price;
     }
 
