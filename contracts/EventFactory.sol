@@ -36,7 +36,6 @@ contract EventFactory is ERC20 {
     address internal cUsdTokenAddress =
         0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
 
-    address private owner;
     uint8 private constant EVENT_ROOMS = 15;
     uint16 private constant ROOM_CAPACITY = 300;
     uint256 private constant freeCoinEventCreation = 5 ether;
@@ -58,21 +57,11 @@ contract EventFactory is ERC20 {
     Room[15] public allRooms;
     mapping(uint => Event) allEvents;
 
-    modifier onlyOwner() {
-        require(msg.sender == owner);
-        _;
-    }
 
     enum EventType {
         Social,
         Business,
         Personal
-    }
-
-    enum Location {
-        Lagos,
-        Abuja,
-        Enugu
     }
 
     struct Attendees {
@@ -81,8 +70,8 @@ contract EventFactory is ERC20 {
     }
 
     struct Event {
-        address eventOwner;
-        string eventName;
+        address owner;
+        string name;
         address[] attendees;
         mapping(address => uint) attendeesTicketVolume;
         uint ticketVolume;
@@ -94,7 +83,7 @@ contract EventFactory is ERC20 {
     }
 
     event EventCreated(
-        address eventOwner,
+        address owner,
         string eventOwnerName,
         uint ticketVolume,
         uint ticketPrice,
@@ -142,8 +131,8 @@ contract EventFactory is ERC20 {
 
     /// @dev Function to create an event.
     function createEvent(
-        address payable eventOwner,
-        string calldata eventName,
+        address payable owner,
+        string calldata name,
         uint ticketVolume,
         uint ticketPrice,
         uint startDate,
@@ -152,7 +141,7 @@ contract EventFactory is ERC20 {
     ) external payable {
         (uint roomAvailable, bool available) = checkAvailableRooms();
         require(available == true, "Sorry, no available rooms to book");
-        require(eventOwner != address(0), "invalid address given");
+        require(owner != address(0), "invalid address given");
         require(
             ticketVolume <= ROOM_CAPACITY,
             "ticket volume exceeds room capacity"
@@ -187,8 +176,8 @@ contract EventFactory is ERC20 {
         totalEvents++;
         allRooms[roomAvailable].booked = true;
         allRooms[roomAvailable].currentEvent = totalEvents;
-        newEvent.eventOwner = eventOwner;
-        newEvent.eventName = eventName;
+        newEvent.owner = owner;
+        newEvent.name = name;
         newEvent.ticketVolume = ticketVolume;
         newEvent.ticketPrice = ticketPrice;
         newEvent.startDate = startDate;
@@ -197,8 +186,8 @@ contract EventFactory is ERC20 {
         newEvent.eventType = eventType;
 
         emit EventCreated(
-            eventOwner,
-            eventName,
+            owner,
+            name,
             ticketVolume,
             ticketPrice,
             startDate,
@@ -211,8 +200,8 @@ contract EventFactory is ERC20 {
         external
         view
         returns (
-            address eventOwner,
-            string memory eventName,
+            address owner,
+            string memory name,
             uint ticketVolume,
             uint roomId,
             uint ticketPrice,
@@ -224,8 +213,8 @@ contract EventFactory is ERC20 {
     {
         Event storage theEvent = allEvents[id];
 
-        eventOwner = theEvent.eventOwner;
-        eventName = theEvent.eventName;
+        owner = theEvent.owner;
+        name = theEvent.name;
         ticketVolume = theEvent.ticketVolume;
         roomId = theEvent.roomId;
         ticketPrice = theEvent.ticketPrice;
@@ -250,7 +239,7 @@ contract EventFactory is ERC20 {
         require(volume <= 3, "No user may buy more than three tickets");
         Event storage theEvent = allEvents[allRooms[id].currentEvent];
         require(
-            theEvent.eventOwner != msg.sender,
+            theEvent.owner != msg.sender,
             "You can't buy tickets for your own event"
         );
         require(
@@ -267,13 +256,19 @@ contract EventFactory is ERC20 {
         }
         require(
             IERC20Token(cUsdTokenAddress).transfer(
-                theEvent.eventOwner,
+                theEvent.owner,
                 theEvent.ticketPrice
             ),
             "Transfer failed."
         );
 
         return true;
+    }
+
+    /// @dev Function for the owner to change the ticket price
+    function changeTicketPrice(uint id , uint price) public {
+        require(msg.sender == allEvents[id].owner, "Only the owner can change the price");
+        allEvents[id].ticketPrice = price;
     }
 
     receive() external payable {}
